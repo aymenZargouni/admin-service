@@ -5,6 +5,7 @@ import com.example.clientservice.dto.ClientResponse;
 import com.example.clientservice.dto.ContractRequest;
 import com.example.clientservice.model.Client;
 import com.example.clientservice.model.Contract;
+import com.example.clientservice.model.ContractType;
 import com.example.clientservice.repo.ClientRepo;
 import com.example.clientservice.repo.ContractRepo;
 import com.example.clientservice.services.ClientService;
@@ -59,5 +60,6 @@ public class ClientController {
     public void addContractToClient(@PathVariable(name = "clientId")String clientId,@PathVariable(name = "contractId")String contractId){
             clientService.addContractToClient(clientId,contractId);
         }
+
     }
 

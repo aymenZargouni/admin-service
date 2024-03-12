@@ -5,6 +5,7 @@ import com.example.clientservice.dto.ClientResponse;
 import com.example.clientservice.dto.ContractRequest;
 import com.example.clientservice.model.Client;
 import com.example.clientservice.model.Contract;
+import com.example.clientservice.model.ContractType;
 import com.example.clientservice.repo.ClientRepo;
 import com.example.clientservice.repo.ContractRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +137,7 @@ public class ClientService {
         return client.getContract();
     }
 
+
     private ContractRequest convertToContractRequest(Contract contract) {
 
         ContractRequest contractRequest = new ContractRequest();
@@ -151,5 +153,6 @@ public class ClientService {
 
         return contractRequest;
     }
+
 
 }

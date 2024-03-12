@@ -3,6 +3,7 @@ package com.example.clientservice.controller;
 import com.example.clientservice.dto.ContractRequest;
 import com.example.clientservice.dto.ContractResponse;
 import com.example.clientservice.model.Contract;
+import com.example.clientservice.model.ContractType;
 import com.example.clientservice.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,5 +51,17 @@ public class ContractController {
     public Contract getContractById(@PathVariable(name = "contractId")String contractId){
 
         return contractService.getContractById(contractId);
+    }
+
+    @GetMapping("/getByContractType/{contractType}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByContractType(@PathVariable(name = "contractType") ContractType contractType){
+        return contractService.findByContractType(contractType);
+    }
+
+    @GetMapping("/getByPremiumType/{premiumType}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByPremiumType(@PathVariable(name = "premiumType") ContractType.PremiumType premiumType){
+        return contractService.findByPremiumType(premiumType);
     }
 }

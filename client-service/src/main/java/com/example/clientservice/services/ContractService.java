@@ -98,5 +98,13 @@ public class ContractService {
         return contractRepo.getContractById(contractId);
     }
 
+    public List<Contract>findByContractType(ContractType contractType){
+        return contractRepo.findByContractType(contractType);
+    }
+
+    public List<Contract>findByPremiumType(ContractType.PremiumType premiumType){
+        return contractRepo.findByPremiumType(premiumType);
+    }
+
 
 }
