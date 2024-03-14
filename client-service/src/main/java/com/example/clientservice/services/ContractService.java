@@ -41,7 +41,7 @@ public class ContractService {
                     case GOLD:
                         contract.setTickets(10);
                         break;
-                    case PLATINUM:
+                    case PLATINIUM:
                         contract.setTickets(15);
                         break;
                 }
@@ -93,7 +93,8 @@ public class ContractService {
         contractRepo.deleteById(id);
     }
 
-    // Repo methods
+    // ---------------------------------Repository methods----------------------------------
+    //
     public Contract getContractById(String contractId){
         return contractRepo.getContractById(contractId);
     }
@@ -105,6 +106,27 @@ public class ContractService {
     public List<Contract>findByPremiumType(ContractType.PremiumType premiumType){
         return contractRepo.findByPremiumType(premiumType);
     }
+
+    public List<Contract>findByOrderByTicketsAsc(){
+        return contractRepo.findByOrderByTicketsAsc();
+    }
+
+    public List<Contract>findByOrderByTicketsDesc(){
+        return contractRepo.findByOrderByTicketsDesc();
+    }
+    /*
+    public List<Contract>findByOrderByStartDate(){
+        return contractRepo.findByOrderByStartDate();
+    }
+    */
+    public List<Contract>findByOrderByEndDateAsc(){
+        return contractRepo.findByOrderByEndDateAsc();
+    }
+    public List<Contract>findByOrderByEndDateDesc(){
+        return contractRepo.findByOrderByEndDateDesc();
+    }
+
+
 
 
 }

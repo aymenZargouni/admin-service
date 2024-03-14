@@ -21,4 +21,6 @@ public class ClientResponse {
     private String email;
     private String password;
     private List<Contract> contract;
+    private int ticketsAvailable;
+
 }

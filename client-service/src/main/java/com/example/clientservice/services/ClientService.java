@@ -39,6 +39,7 @@ public class ClientService {
                     .build();
             listContracts.add(existingContract);
             client.setContract(listContracts);
+            client.updateTicketsAvailable();
 
             clientRepo.save(client);
         } else {
@@ -69,6 +70,7 @@ public class ClientService {
         Client existingClient = clientCheck.get();
 
         Contract existingContract = contractRepo.getContractById(contractId);
+        int allTickets = existingContract.getTickets();
         if (existingContract == null) {
             throw new RuntimeException("Contract with ID " + contractId + " not found");
         }
@@ -79,7 +81,7 @@ public class ClientService {
         }
         contractList.add(existingContract);
         existingClient.setContract(contractList);
-
+        existingClient.updateTicketsAvailable();
         clientRepo.save(existingClient);
     }
 

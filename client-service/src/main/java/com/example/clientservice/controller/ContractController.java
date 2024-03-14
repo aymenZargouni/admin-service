@@ -64,4 +64,28 @@ public class ContractController {
     public List<Contract> getByPremiumType(@PathVariable(name = "premiumType") ContractType.PremiumType premiumType){
         return contractService.findByPremiumType(premiumType);
     }
+
+    @GetMapping("/getByTicketsAsc")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByTicketsAsc(){
+        return contractService.findByOrderByTicketsAsc();
+    }
+
+    @GetMapping("/getByTicketsDesc")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByTicketsDesc(){
+        return contractService.findByOrderByTicketsDesc();
+    }
+
+    @GetMapping("/getByEndDateAsc")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByEndDateAsc(){
+        return contractService.findByOrderByEndDateAsc();
+    }
+
+    @GetMapping("/getByEndDateDesc")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Contract> getByEndDateDesc(){
+        return contractService.findByOrderByEndDateDesc();
+    }
 }

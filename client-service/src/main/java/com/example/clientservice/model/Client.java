@@ -23,4 +23,10 @@ public class Client {
     private String password;
     @DBRef
     private List<Contract> contract;
+    private int ticketsAvailable;
+
+    public void updateTicketsAvailable() {
+        int allTickets = this.getTicketsAvailable();
+        this.ticketsAvailable = contract.stream().mapToInt(Contract::getTickets).sum()+allTickets;
+    }
 }

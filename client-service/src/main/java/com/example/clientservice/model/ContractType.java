@@ -8,6 +8,6 @@ public enum ContractType {
     public enum PremiumType {
         SILVER,
         GOLD,
-        PLATINUM
+        PLATINIUM
     }
 }
