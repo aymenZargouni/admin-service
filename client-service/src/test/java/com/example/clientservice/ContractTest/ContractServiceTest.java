@@ -11,13 +11,12 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -127,6 +126,55 @@ public class ContractServiceTest {
 
         assertEquals(1, responses.size());
         assertEquals("1", responses.get(0).getId());
+    }
+
+    @Test
+    public void editContract_Success() {
+
+        String contractId = "existingId";
+        Contract existingContract = new Contract();
+        existingContract.setId(contractId);
+
+        ContractRequest request = ContractRequest.builder()
+                .contractType(ContractType.PREMIUM)
+                .premiumType(ContractType.PremiumType.GOLD)
+                .entreprise("TESTENTREPRISE")
+                .phoneNumber("12345689")
+                .startDate(new Date(2024-03-07))
+                .endDate(new Date(2025-03-07))
+                .maintenance(3)
+                .build();
+
+
+
+        when(contractRepo.findById(contractId)).thenReturn(Optional.of(existingContract));
+
+        contractService.editContract(request, contractId);
+
+        verify(contractRepo).save(any(Contract.class));
+    }
+
+    @Test
+    public void editContract_throwsRuntimeExceptionWhenContractNotFound() {
+        String contractId = "nonExistingContractId";
+        ContractRequest contractRequest = new ContractRequest();
+
+        when(contractRepo.findById(contractId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> {
+            contractService.editContract(contractRequest, contractId);
+        });
+    }
+
+    @Test
+    public void deleteContract_Success() {
+        String contractId = "existingId";
+        Contract contract = new Contract();
+        contract.setId(contractId);
+
+        contractService.deleteContract(contractId);
+
+        verify(contractRepo).deleteById(contractId);
     }
 
 }

@@ -5,9 +5,11 @@ import com.example.clientservice.dto.ContractResponse;
 import com.example.clientservice.model.Contract;
 import com.example.clientservice.model.ContractType;
 import com.example.clientservice.services.ContractService;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
