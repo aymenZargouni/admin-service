@@ -21,6 +21,7 @@ public class ContractResponse {
     private String phoneNumber;
     private Date startDate;
     private Date endDate;
+    private String description;
     private int maintenance;
     private int tickets;
 }

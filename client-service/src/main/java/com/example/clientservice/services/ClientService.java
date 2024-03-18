@@ -39,8 +39,7 @@ public class ClientService {
                     .build();
             listContracts.add(existingContract);
             client.setContract(listContracts);
-            client.updateTicketsAvailable();
-
+            client.setTicketsAvailable(existingContract.getTickets());
             clientRepo.save(client);
         } else {
             throw new RuntimeException("Contract with ID " + contractId + " not found");
@@ -70,7 +69,8 @@ public class ClientService {
         Client existingClient = clientCheck.get();
 
         Contract existingContract = contractRepo.getContractById(contractId);
-        int allTickets = existingContract.getTickets();
+        int newTickets = existingContract.getTickets();
+        int clientsTickets = existingClient.getTicketsAvailable();
         if (existingContract == null) {
             throw new RuntimeException("Contract with ID " + contractId + " not found");
         }
@@ -81,7 +81,7 @@ public class ClientService {
         }
         contractList.add(existingContract);
         existingClient.setContract(contractList);
-        existingClient.updateTicketsAvailable();
+        existingClient.setTicketsAvailable(newTickets+clientsTickets);
         clientRepo.save(existingClient);
     }
 
@@ -108,6 +108,19 @@ public class ClientService {
         client.setContract(updatedContracts);
         clientRepo.save(client);
 
+    }
+
+    public void updateClientTicketsAvailable(String clientId,int ticketsAv) {
+
+        Optional<Client> clientOptional = clientRepo.findById(clientId);
+        if (!clientOptional.isPresent()) {
+            throw new RuntimeException("Client with ID " + clientId + " not found");
+        }
+        Client client = clientOptional.get();
+
+        client.setTicketsAvailable(ticketsAv);
+
+        clientRepo.save(client);
     }
 
 

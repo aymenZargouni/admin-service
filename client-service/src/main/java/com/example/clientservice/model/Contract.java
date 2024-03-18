@@ -16,12 +16,14 @@ public class Contract {
 
     @Id
     private String id;
+    @NonNull
     private ContractType contractType;
     private ContractType.PremiumType premiumType;
     private String entreprise;
     private String phoneNumber;
     private Date startDate;
     private Date endDate;
+    private String description;
     private int maintenance;
     private int tickets;
 }

@@ -23,6 +23,7 @@ public class ContractRequest {
     private Date startDate;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date endDate;
+    private String description;
     private int maintenance;
     private int tickets;
 

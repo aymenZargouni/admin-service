@@ -11,10 +11,12 @@ import com.example.clientservice.repo.ContractRepo;
 import com.example.clientservice.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -61,5 +63,11 @@ public class ClientController {
             clientService.addContractToClient(clientId,contractId);
         }
 
+    @PutMapping("/ticketsAvailable/{clientId}")
+    public ResponseEntity<?> updateClientTicketsAvailable(@PathVariable String clientId, @RequestBody Map<String, Integer> updateRequest) {
+        int ticketsAv = updateRequest.getOrDefault("ticketsAvailable", 0);
+        clientService.updateClientTicketsAvailable(clientId, ticketsAv);
+        return ResponseEntity.ok().build();
     }
+}
 

@@ -1,28 +1,21 @@
-package com.example.clientservice.ContractTest;
+package com.example.clientservice.ControllerTest;
 
 import com.example.clientservice.controller.ContractController;
 import com.example.clientservice.dto.ContractRequest;
 import com.example.clientservice.dto.ContractResponse;
 import com.example.clientservice.model.ContractType;
 import com.example.clientservice.services.ContractService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.minidev.json.JSONUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 import java.util.List;
@@ -52,7 +45,7 @@ public class ContractControllerTest {
     }
 
     @Test
-    public void createClient_Success() throws Exception {
+    public void createContract_Success() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
         ContractRequest request = ContractRequest.builder()
@@ -75,7 +68,7 @@ public class ContractControllerTest {
     }
 
     @Test
-    public void createClient_InvalidData() throws Exception {
+    public void createContract_InvalidData() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
         ContractRequest request = new ContractRequest();
@@ -144,6 +137,18 @@ public class ContractControllerTest {
     }
 
     @Test
+    public void deleteContract_FailedWithInvalidId() throws Exception {
+
+        String contractId = "1";
+
+        mockMvc.perform(delete("/api/contract/" + contractId))
+                .andExpect(status().isMethodNotAllowed());
+
+        verify(contractService,never()).deleteContract(contractId);
+    }
+
+
+    @Test
     public void getAllContracts_ReturnsData() throws Exception {
         List<ContractResponse> responses = List.of(new ContractResponse(), new ContractResponse());
         given(contractService.getAllContracts()).willReturn(responses);
@@ -156,6 +161,4 @@ public class ContractControllerTest {
 
         verify(contractService).getAllContracts();
     }
-
-
 }

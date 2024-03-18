@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,19 @@ public class ContractService {
 
     public void createContract(ContractRequest contractRequest) {
         contractRequest.setTickets(0);
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date today = cal.getTime();
+        if (contractRequest.getStartDate().before(today)) {
+            throw new IllegalArgumentException("StartDate must be today or later.");
+        }
+        if (contractRequest.getEndDate().before(contractRequest.getStartDate())) {
+            throw new IllegalArgumentException("EndDate must be after StartDate.");
+        }
         Contract contract = Contract.builder()
                 .contractType(contractRequest.getContractType())
                 .premiumType(contractRequest.getPremiumType())
@@ -27,6 +43,7 @@ public class ContractService {
                 .phoneNumber(contractRequest.getPhoneNumber())
                 .startDate(contractRequest.getStartDate())
                 .endDate(contractRequest.getEndDate())
+                .description(contractRequest.getDescription())
                 .maintenance(contractRequest.getMaintenance())
                 .build();
         switch (contractRequest.getContractType()){
@@ -64,6 +81,7 @@ public class ContractService {
         contractResponse.setPhoneNumber(contract.getPhoneNumber());
         contractResponse.setStartDate(contract.getStartDate());
         contractResponse.setEndDate(contract.getEndDate());
+        contractResponse.setDescription(contractResponse.getDescription());
         contractResponse.setMaintenance(contract.getMaintenance());
         contractResponse.setTickets(contract.getTickets());
         return contractResponse;
@@ -80,8 +98,26 @@ public class ContractService {
             contract.setPhoneNumber(contractRequest.getPhoneNumber());
             contract.setStartDate(contractRequest.getStartDate());
             contract.setEndDate(contractRequest.getEndDate());
+            contract.setDescription(contractRequest.getDescription());
             contract.setMaintenance(contractRequest.getMaintenance());
-            contract.setTickets(contractRequest.getTickets());
+
+            switch (contractRequest.getContractType()){
+                case STANDARD :
+                    contract.setPremiumType(null);
+                    break;
+                case PREMIUM :
+                    switch (contractRequest.getPremiumType()){
+                        case SILVER :
+                            contract.setTickets(5);
+                            break;
+                        case GOLD:
+                            contract.setTickets(10);
+                            break;
+                        case PLATINIUM:
+                            contract.setTickets(15);
+                            break;
+                    }
+            }
 
             contractRepo.save(contract);
         } else {
@@ -94,7 +130,6 @@ public class ContractService {
     }
 
     // ---------------------------------Repository methods----------------------------------
-    //
     public Contract getContractById(String contractId){
         return contractRepo.getContractById(contractId);
     }
