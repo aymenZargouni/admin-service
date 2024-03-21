@@ -24,4 +24,6 @@ public class ContractResponse {
     private String description;
     private int maintenance;
     private int tickets;
+    private int currentTickets;
+
 }

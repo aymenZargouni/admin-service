@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/client")
+@RequestMapping("api/v1/client")
 public class ClientController {
 
     @Autowired
@@ -33,13 +33,13 @@ public class ClientController {
     private ContractRepo contractRepo;
 
 
-    @PostMapping("{contractId}")
+    @PostMapping("/create/{contractId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void createClient (@RequestBody ClientRequest clientRequest,@PathVariable(name = "contractId") String contractId){
         clientService.createClient(clientRequest,contractId);
     }
 
-    @GetMapping()
+    @GetMapping("/getAll")
     @ResponseStatus(HttpStatus.OK)
     public List<ClientResponse> getAllClients(){
         return clientService.getAllClients();
@@ -56,8 +56,13 @@ public class ClientController {
     public void editClient(@RequestBody ClientRequest clientRequest,@PathVariable(name = "clientId")String clientId){
         clientService.updateClientContracts(clientRequest,clientId);
     }
+    @DeleteMapping("/delete/{clientId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteContract (@PathVariable(name = "clientId")String clientId){
+        clientService.deleteClient(clientId);
+    }
 
-    @PutMapping("/{clientId}/{contractId}")
+    @PutMapping("/addContract/{clientId}/{contractId}")
     @ResponseStatus(HttpStatus.OK)
     public void addContractToClient(@PathVariable(name = "clientId")String clientId,@PathVariable(name = "contractId")String contractId){
             clientService.addContractToClient(clientId,contractId);

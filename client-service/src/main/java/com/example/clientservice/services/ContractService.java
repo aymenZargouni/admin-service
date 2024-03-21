@@ -41,7 +41,9 @@ public class ContractService {
                 .premiumType(contractRequest.getPremiumType())
                 .entreprise(contractRequest.getEntreprise())
                 .phoneNumber(contractRequest.getPhoneNumber())
+                .description(contractRequest.getDescription())
                 .startDate(contractRequest.getStartDate())
+                .updateDate(new Date())
                 .endDate(contractRequest.getEndDate())
                 .description(contractRequest.getDescription())
                 .maintenance(contractRequest.getMaintenance())
@@ -54,12 +56,15 @@ public class ContractService {
                 switch (contractRequest.getPremiumType()){
                     case SILVER :
                         contract.setTickets(5);
+                        contract.setCurrentTickets(5);
                         break;
                     case GOLD:
                         contract.setTickets(10);
+                        contract.setCurrentTickets(10);
                         break;
                     case PLATINIUM:
-                        contract.setTickets(15);
+                        contract.setTickets(50);
+                        contract.setCurrentTickets(50);
                         break;
                 }
         }
@@ -84,6 +89,7 @@ public class ContractService {
         contractResponse.setDescription(contractResponse.getDescription());
         contractResponse.setMaintenance(contract.getMaintenance());
         contractResponse.setTickets(contract.getTickets());
+        contractResponse.setCurrentTickets(contract.getCurrentTickets());
         return contractResponse;
     }
 
@@ -96,25 +102,36 @@ public class ContractService {
             contract.setPremiumType(contractRequest.getPremiumType());
             contract.setEntreprise(contractRequest.getEntreprise());
             contract.setPhoneNumber(contractRequest.getPhoneNumber());
+            contract.setDescription(contractRequest.getDescription());
             contract.setStartDate(contractRequest.getStartDate());
             contract.setEndDate(contractRequest.getEndDate());
-            contract.setDescription(contractRequest.getDescription());
+            contract.setUpdateDate(new Date());
             contract.setMaintenance(contractRequest.getMaintenance());
-
+            contract.setCurrentTickets(contractRequest.getCurrentTickets());
             switch (contractRequest.getContractType()){
                 case STANDARD :
                     contract.setPremiumType(null);
+                    contract.setCurrentTickets(0);
                     break;
                 case PREMIUM :
                     switch (contractRequest.getPremiumType()){
                         case SILVER :
-                            contract.setTickets(5);
+                            if(contractRequest.getCurrentTickets()>5){
+                                throw new IllegalArgumentException("Silver current tickets should be below or equal to 5");
+                            }else{
+                                contract.setTickets(5);
+                            }
                             break;
                         case GOLD:
-                            contract.setTickets(10);
+                            if(contractRequest.getCurrentTickets()>10){
+                                throw new IllegalArgumentException("Gold current tickets should be below or equal to 10");
+                            }else{
+                                contract.setTickets(10);
+                            }
                             break;
                         case PLATINIUM:
-                            contract.setTickets(15);
+                            contract.setTickets(50);
+                            contract.setCurrentTickets(50);
                             break;
                     }
             }

@@ -110,6 +110,10 @@ public class ClientService {
 
     }
 
+    public void deleteClient(String clientId) {
+        this.clientRepo.deleteById(clientId);
+    }
+
     public void updateClientTicketsAvailable(String clientId,int ticketsAv) {
 
         Optional<Client> clientOptional = clientRepo.findById(clientId);
@@ -168,6 +172,5 @@ public class ClientService {
 
         return contractRequest;
     }
-
 
 }

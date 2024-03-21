@@ -23,9 +23,11 @@ public class Contract {
     private String phoneNumber;
     private Date startDate;
     private Date endDate;
+    private Date updateDate;
     private String description;
     private int maintenance;
     private int tickets;
+    private int currentTickets;
 }
 
 

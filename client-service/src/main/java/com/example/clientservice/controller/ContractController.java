@@ -16,26 +16,26 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("api/contract")
+@RequestMapping("api/v1/contract")
 public class ContractController {
 
     @Autowired
     private ContractService contractService;
 
 
-    @PostMapping
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public void createContract (@RequestBody ContractRequest contractRequest){
         contractService.createContract(contractRequest);
     }
 
-    @GetMapping
+    @GetMapping("/getAll")
     @ResponseStatus(HttpStatus.OK)
     public List<ContractResponse>getAllContracts(){
         return contractService.getAllContracts();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/edit/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editContract (@RequestBody ContractRequest contractRequest,@PathVariable(name = "id")String _id){
         contractService.editContract(contractRequest,_id);

@@ -59,7 +59,7 @@ public class ContractControllerTest {
 
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/contract")
+        mockMvc.perform(post("/api/v1/contract/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
@@ -75,7 +75,7 @@ public class ContractControllerTest {
 
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/contract")
+        mockMvc.perform(post("/api/v1/contract/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
@@ -99,7 +99,7 @@ public class ContractControllerTest {
         String contractId = "1";
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(put("/api/contract/" + contractId)
+        mockMvc.perform(put("/api/v1/contract/edit/" + contractId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isOk());
@@ -116,7 +116,7 @@ public class ContractControllerTest {
         ContractRequest request = new ContractRequest();
         String jsonRequest = objectMapper.writeValueAsString(request);
 
-        mockMvc.perform(put("/api/contract/" + contractId)
+        mockMvc.perform(put("/api/v1/contract/edit/" + contractId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest());
@@ -130,7 +130,7 @@ public class ContractControllerTest {
 
         String contractId = "1";
 
-        mockMvc.perform(delete("/api/contract/delete/" + contractId))
+        mockMvc.perform(delete("/api/v1/contract/delete/" + contractId))
                 .andExpect(status().isOk());
 
         verify(contractService).deleteContract(contractId);
@@ -141,7 +141,7 @@ public class ContractControllerTest {
 
         String contractId = "1";
 
-        mockMvc.perform(delete("/api/contract/" + contractId))
+        mockMvc.perform(delete("/api/v1/contract/delete/" + contractId))
                 .andExpect(status().isMethodNotAllowed());
 
         verify(contractService,never()).deleteContract(contractId);
