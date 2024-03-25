@@ -16,7 +16,6 @@ import java.util.List;
 public class ClientRequest {
 
 
-    private String entreprise;
     private String email;
     private String password;
     private String phoneNumber;

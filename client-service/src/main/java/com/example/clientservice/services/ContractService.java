@@ -43,7 +43,7 @@ public class ContractService {
         Contract contract = Contract.builder()
                 .contractType(contractRequest.getContractType())
                 .premiumType(contractRequest.getPremiumType())
-                .description(contractRequest.getDescription())
+                .entreprise(contractRequest.getEntreprise())
                 .startDate(contractRequest.getStartDate())
                 .endDate(contractRequest.getEndDate())
                 .updateDate(new Date())
@@ -53,6 +53,7 @@ public class ContractService {
         switch (contractRequest.getContractType()) {
             case STANDARD:
                 contract.setPremiumType(null);
+                contract.setMaintenance(0);
                 break;
             case PREMIUM:
                 switch (contractRequest.getPremiumType()) {
@@ -81,6 +82,7 @@ public class ContractService {
         contractResponse.setId(contract.getId());
         contractResponse.setContractType(contract.getContractType());
         contractResponse.setPremiumType(contract.getPremiumType());
+        contractResponse.setEntreprise(contract.getEntreprise());
         contractResponse.setStartDate(contract.getStartDate());
         contractResponse.setEndDate(contract.getEndDate());
         contractResponse.setUpdateDate(contract.getUpdateDate());
@@ -97,10 +99,11 @@ public class ContractService {
 
             contract.setContractType(contractRequest.getContractType());
             contract.setPremiumType(contractRequest.getPremiumType());
-            contract.setDescription(contractRequest.getDescription());
+            contract.setEntreprise(contractRequest.getEntreprise());
             contract.setStartDate(contractRequest.getStartDate());
             contract.setEndDate(contractRequest.getEndDate());
             contract.setUpdateDate(new Date());
+            contract.setDescription(contractRequest.getDescription());
             switch (contractRequest.getContractType()) {
                 case STANDARD:
                     contract.setPremiumType(null);

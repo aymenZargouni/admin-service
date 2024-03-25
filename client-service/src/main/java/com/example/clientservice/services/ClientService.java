@@ -34,7 +34,6 @@ public class ClientService {
         Contract existingContract = contractRepo.getContractById(contractId);
         if (existingContract != null) {
             Client client = Client.builder()
-                    .entreprise(clientRequest.getEntreprise())
                     .email(clientRequest.getEmail())
                     .password(clientRequest.getPassword())
                     .phoneNumber(clientRequest.getPhoneNumber())
@@ -53,7 +52,6 @@ public class ClientService {
         if(existingClient.isPresent()){
             Client client = existingClient.get();
 
-            client.setEntreprise(clientRequest.getEntreprise());
             client.setPhoneNumber(clientRequest.getPhoneNumber());
             client.setLocation(clientRequest.getLocation());
             client.setTicketsAvailable(clientRequest.getTicketsAvailable());
@@ -88,7 +86,7 @@ public class ClientService {
                 existingClient.setTicketsAvailable(existingContract.getTickets());
             clientRepo.save(existingClient);
         }else{
-            throw  new RuntimeException("This client " + existingClient.getEntreprise() + " already have a contract, please remove it's contract first");
+            throw  new RuntimeException("This client " + existingClient.getContract().getEntreprise() + " already have a contract, please remove it's contract first");
         }
 
     }
@@ -125,8 +123,7 @@ public class ClientService {
 
     private ClientResponse convertToClientResponse(Client client) {
         ClientResponse clientResponse = new ClientResponse();
-        clientResponse.set_id(client.get_id());
-        clientResponse.setEntreprise(client.getEntreprise());
+        clientResponse.setId(client.getId());
         clientResponse.setEmail(client.getEmail());
         clientResponse.setPassword(client.getPassword());
         clientResponse.setPhoneNumber(client.getPhoneNumber());
@@ -136,7 +133,7 @@ public class ClientService {
     }
 
     public Optional<Client> getClientById(String clientId){
-        return clientRepo.findById(clientId);
+        return clientRepo.findClientById(clientId);
     }
 
 

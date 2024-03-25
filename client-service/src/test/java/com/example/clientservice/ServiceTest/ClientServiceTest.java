@@ -107,16 +107,16 @@ public class ClientServiceTest {
     @Test
     public void editClient_Success(){
         Client existingClient = new Client();
-        existingClient.set_id("1");
+        existingClient.setId("1");
         ClientRequest clientRequest = ClientRequest.builder()
                 .entreprise("Test Entreprise")
                 .phoneNumber("12345678")
                 .location("test")
                 .build();
 
-        when(clientRepo.findById(existingClient.get_id())).thenReturn(Optional.of(existingClient));
+        when(clientRepo.findById(existingClient.getId())).thenReturn(Optional.of(existingClient));
 
-        clientService.editClient(clientRequest,existingClient.get_id());
+        clientService.editClient(clientRequest,existingClient.getId());
 
         assertEquals(existingClient.getEntreprise(),"Test Entreprise");
 
@@ -132,9 +132,9 @@ public class ClientServiceTest {
                 .location("test")
                 .build();
 
-        when(clientRepo.findById(existingClient.get_id())).thenReturn(Optional.empty());
+        when(clientRepo.findById(existingClient.getId())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,()->clientService.editClient(clientRequest,existingClient.get_id()));
+        assertThrows(RuntimeException.class,()->clientService.editClient(clientRequest,existingClient.getId()));
     }
 
     @Test

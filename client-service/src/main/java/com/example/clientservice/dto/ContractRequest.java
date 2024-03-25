@@ -17,6 +17,7 @@ public class ContractRequest {
     @NonNull
     private ContractType contractType;
     private ContractType.PremiumType premiumType;
+    private String entreprise;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date startDate;
     @JsonFormat(pattern="yyyy-MM-dd")

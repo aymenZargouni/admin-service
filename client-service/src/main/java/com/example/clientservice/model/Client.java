@@ -15,9 +15,7 @@ import java.util.List;
 public class Client {
 
     @Id
-    private String _id;
-    @NonNull
-    private String entreprise;
+    private String id;
     @NonNull
     private String email;
     private String password;

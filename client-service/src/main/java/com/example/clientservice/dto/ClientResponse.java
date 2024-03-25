@@ -15,9 +15,7 @@ import java.util.List;
 @Data
 public class ClientResponse {
 
-    private String _id;
-    @NonNull
-    private String entreprise;
+    private String id;
     private String email;
     private String password;
     private String phoneNumber;
