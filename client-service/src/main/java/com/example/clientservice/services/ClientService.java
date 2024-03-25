@@ -29,20 +29,38 @@ public class ClientService {
     @Autowired
     private ContractService contractService;
 
+
     public void createClient(ClientRequest clientRequest, String contractId) {
         Contract existingContract = contractRepo.getContractById(contractId);
         if (existingContract != null) {
-            List<Contract> listContracts = new ArrayList<>();
             Client client = Client.builder()
+                    .entreprise(clientRequest.getEntreprise())
                     .email(clientRequest.getEmail())
                     .password(clientRequest.getPassword())
+                    .phoneNumber(clientRequest.getPhoneNumber())
+                    .contract(existingContract)
+                    .location(clientRequest.getLocation())
+                    .ticketsAvailable(existingContract.getTickets())
                     .build();
-            listContracts.add(existingContract);
-            client.setContract(listContracts);
-            client.setTicketsAvailable(existingContract.getTickets());
+
             clientRepo.save(client);
         } else {
             throw new RuntimeException("Contract with ID " + contractId + " not found");
+        }
+    }
+    public void editClient(ClientRequest clientRequest,String clientId){
+        Optional<Client> existingClient = clientRepo.findById(clientId);
+        if(existingClient.isPresent()){
+            Client client = existingClient.get();
+
+            client.setEntreprise(clientRequest.getEntreprise());
+            client.setPhoneNumber(clientRequest.getPhoneNumber());
+            client.setLocation(clientRequest.getLocation());
+            client.setTicketsAvailable(clientRequest.getTicketsAvailable());
+
+            clientRepo.save(client);
+        }else{
+            throw new RuntimeException("Client "+ clientId + " Not Found ");
         }
     }
 
@@ -52,15 +70,6 @@ public class ClientService {
     }
 
 
-    private ClientResponse convertToClientResponse(Client client) {
-        ClientResponse clientResponse = new ClientResponse();
-        clientResponse.set_id(client.get_id());
-        clientResponse.setEmail(client.getEmail());
-        clientResponse.setPassword(client.getPassword());
-        clientResponse.setContract(client.getContract());
-        return clientResponse;
-    }
-
     public void addContractToClient(String clientId, String contractId) {
         Optional<Client> clientCheck = clientRepo.findById(clientId);
         if (!clientCheck.isPresent()) {
@@ -69,49 +78,27 @@ public class ClientService {
         Client existingClient = clientCheck.get();
 
         Contract existingContract = contractRepo.getContractById(contractId);
-        int newTickets = existingContract.getTickets();
-        int clientsTickets = existingClient.getTicketsAvailable();
+
         if (existingContract == null) {
             throw new RuntimeException("Contract with ID " + contractId + " not found");
         }
 
-        List<Contract> contractList = existingClient.getContract();
-        if (contractList == null) {
-            contractList = new ArrayList<>();
+        if (existingClient.getContract() == null){
+                existingClient.setContract(existingContract);
+                existingClient.setTicketsAvailable(existingContract.getTickets());
+            clientRepo.save(existingClient);
+        }else{
+            throw  new RuntimeException("This client " + existingClient.getEntreprise() + " already have a contract, please remove it's contract first");
         }
-        contractList.add(existingContract);
-        existingClient.setContract(contractList);
-        existingClient.setTicketsAvailable(newTickets+clientsTickets);
-        clientRepo.save(existingClient);
-    }
-
-    public void updateClientContracts(ClientRequest clientRequest, String clientId) {
-        // Retrieve the client by ID
-        Optional<Client> clientOptional = clientRepo.findById(clientId);
-        if (!clientOptional.isPresent()) {
-            throw new RuntimeException("Client with ID " + clientId + " not found");
-        }
-        Client client = clientOptional.get();
-
-        // Extract the list of ContractRequest objects from the ClientRequest
-        List<Contract> contractRequests = clientRequest.getContract();
-
-        // Check if there are contracts provided in the request
-        if (contractRequests == null || contractRequests.isEmpty()) {
-            throw new IllegalArgumentException("No contract information provided in the request");
-        }
-
-        List<Contract> updatedContracts = new ArrayList<>();
-        for (Contract cr : contractRequests) {
-            updatedContracts.add(cr);
-        }
-        client.setContract(updatedContracts);
-        clientRepo.save(client);
 
     }
 
     public void deleteClient(String clientId) {
+        if (clientRepo.existsById(clientId)) {
         this.clientRepo.deleteById(clientId);
+        } else {
+            throw new ContractService.NotFoundException("Contract not found with ID: " + clientId);
+            }
     }
 
     public void updateClientTicketsAvailable(String clientId,int ticketsAv) {
@@ -127,27 +114,7 @@ public class ClientService {
         clientRepo.save(client);
     }
 
-
-
-    // Placeholder for the conversion method - you need to implement this based on your entity and DTO structure
-    private Contract convertContractRequestToContract(ContractRequest cr) {
-        Contract contract = new Contract();
-        // Set properties from ContractRequest to Contract
-        contract.setContractType(cr.getContractType());
-        contract.setPremiumType(cr.getPremiumType());
-        contract.setEntreprise(cr.getEntreprise());
-        contract.setPhoneNumber(cr.getPhoneNumber());
-        contract.setStartDate(cr.getStartDate());
-        contract.setEndDate(cr.getEndDate());
-        contract.setMaintenance(cr.getMaintenance());
-        contract.setTickets(cr.getTickets());
-        // Add more fields as necessary
-
-        return contract;
-    }
-
-
-    public List<Contract> getClientContracts(String clientId){
+    public Contract getClientContract(String clientId){
         Optional<Client> clientOptional = clientRepo.findById(clientId);
         if (!clientOptional.isPresent()) {
             throw new RuntimeException("Client with ID " + clientId + " not found");
@@ -156,21 +123,22 @@ public class ClientService {
         return client.getContract();
     }
 
-
-    private ContractRequest convertToContractRequest(Contract contract) {
-
-        ContractRequest contractRequest = new ContractRequest();
-        contractRequest.setContractType(contract.getContractType());
-        contractRequest.setPremiumType(contract.getPremiumType());
-        contractRequest.setEntreprise(contract.getEntreprise());
-        contractRequest.setPhoneNumber(contract.getPhoneNumber());
-        contractRequest.setStartDate(contract.getStartDate());
-        contractRequest.setEndDate(contract.getEndDate());
-        contractRequest.setMaintenance(contract.getMaintenance());
-        contractRequest.setTickets(contract.getTickets());
-
-
-        return contractRequest;
+    private ClientResponse convertToClientResponse(Client client) {
+        ClientResponse clientResponse = new ClientResponse();
+        clientResponse.set_id(client.get_id());
+        clientResponse.setEntreprise(client.getEntreprise());
+        clientResponse.setEmail(client.getEmail());
+        clientResponse.setPassword(client.getPassword());
+        clientResponse.setPhoneNumber(client.getPhoneNumber());
+        clientResponse.setLocation(client.getLocation());
+        clientResponse.setContract(client.getContract());
+        return clientResponse;
     }
+
+    public Optional<Client> getClientById(String clientId){
+        return clientRepo.findById(clientId);
+    }
+
+
 
 }

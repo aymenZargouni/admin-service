@@ -2,10 +2,7 @@ package com.example.clientservice.dto;
 
 
 import com.example.clientservice.model.Contract;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,7 +15,12 @@ import java.util.List;
 @Data
 public class ClientRequest {
 
+
+    private String entreprise;
     private String email;
     private String password;
-    private List<Contract> contract;
+    private String phoneNumber;
+    private String location;
+    private int ticketsAvailable;
+    private Contract contract;
 }

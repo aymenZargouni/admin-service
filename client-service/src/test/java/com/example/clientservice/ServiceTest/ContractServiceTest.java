@@ -15,8 +15,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class ContractServiceTest {
@@ -46,10 +45,9 @@ public class ContractServiceTest {
 
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.STANDARD)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(startDate)
                 .endDate(endDate)
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -74,10 +72,9 @@ public class ContractServiceTest {
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.PREMIUM)
                 .premiumType(ContractType.PremiumType.SILVER)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(startDate)
                 .endDate(endDate)
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -101,8 +98,6 @@ public class ContractServiceTest {
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.PREMIUM)
                 .premiumType(ContractType.PremiumType.GOLD)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(startDate)
                 .endDate(endDate)
                 .maintenance(3)
@@ -128,10 +123,9 @@ public class ContractServiceTest {
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.PREMIUM)
                 .premiumType(ContractType.PremiumType.GOLD)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(startDate)
                 .endDate(endDate)
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -154,10 +148,9 @@ public class ContractServiceTest {
                 .id("1")
                 .contractType(ContractType.PREMIUM)
                 .premiumType(ContractType.PremiumType.GOLD)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(new Date(2024-03-07))
                 .endDate(new Date(2025-03-07))
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -181,10 +174,9 @@ public class ContractServiceTest {
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.PREMIUM)
                 .premiumType(ContractType.PremiumType.GOLD)
-                .entreprise("TESTENTREPRISE")
-                .phoneNumber("12345689")
                 .startDate(new Date(2024-03-07))
                 .endDate(new Date(2025-03-07))
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -212,12 +204,24 @@ public class ContractServiceTest {
     @Test
     public void deleteContract_Success() {
         String contractId = "existingId";
-        Contract contract = new Contract();
-        contract.setId(contractId);
+
+        when(contractRepo.existsById(contractId)).thenReturn(true);
 
         contractService.deleteContract(contractId);
 
         verify(contractRepo).deleteById(contractId);
     }
+
+    @Test
+    public void deleteContract_Failed() {
+        String contractId = "nonExistingContractId";
+
+        assertThrows(ContractService.NotFoundException.class, () -> {
+            contractService.deleteContract(contractId);
+        });
+
+        verify(contractRepo, never()).deleteById(contractId);
+    }
+
 
 }

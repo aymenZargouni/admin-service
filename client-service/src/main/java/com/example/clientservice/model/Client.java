@@ -1,9 +1,6 @@
 package com.example.clientservice.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,10 +16,15 @@ public class Client {
 
     @Id
     private String _id;
+    @NonNull
+    private String entreprise;
+    @NonNull
     private String email;
     private String password;
-    @DBRef
-    private List<Contract> contract;
+    private String phoneNumber;
+    private String location;
     private int ticketsAvailable;
+    @DBRef
+    private Contract contract;
 
 }

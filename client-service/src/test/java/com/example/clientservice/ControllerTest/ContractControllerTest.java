@@ -23,8 +23,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,8 +49,6 @@ public class ContractControllerTest {
 
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.STANDARD)
-                .entreprise("New Company")
-                .phoneNumber("12345689")
                 .startDate(new Date(1970-01-01))
                 .endDate(new Date(1970-01-01))
                 .maintenance(3)
@@ -89,10 +86,9 @@ public class ContractControllerTest {
 
         ContractRequest request = ContractRequest.builder()
                 .contractType(ContractType.STANDARD)
-                .entreprise("New Company")
-                .phoneNumber("12345689")
                 .startDate(new Date(1970-01-01))
                 .endDate(new Date(1970-01-01))
+                .updateDate(new Date())
                 .maintenance(3)
                 .build();
 
@@ -141,10 +137,12 @@ public class ContractControllerTest {
 
         String contractId = "1";
 
+        doThrow(new ContractService.NotFoundException("Contract not found with ID: " + contractId))
+                .when(contractService).deleteContract(contractId);
         mockMvc.perform(delete("/api/v1/contract/delete/" + contractId))
-                .andExpect(status().isMethodNotAllowed());
+                .andExpect(status().isNotFound());
 
-        verify(contractService,never()).deleteContract(contractId);
+        verify(contractService).deleteContract(contractId);
     }
 
 
@@ -153,7 +151,7 @@ public class ContractControllerTest {
         List<ContractResponse> responses = List.of(new ContractResponse(), new ContractResponse());
         given(contractService.getAllContracts()).willReturn(responses);
 
-        mockMvc.perform(get("/api/contract")
+        mockMvc.perform(get("/api/v1/contract/getAll")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));

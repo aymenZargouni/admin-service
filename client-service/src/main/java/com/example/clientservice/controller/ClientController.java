@@ -33,10 +33,17 @@ public class ClientController {
     private ContractRepo contractRepo;
 
 
+
     @PostMapping("/create/{contractId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void createClient (@RequestBody ClientRequest clientRequest,@PathVariable(name = "contractId") String contractId){
         clientService.createClient(clientRequest,contractId);
+    }
+
+    @PutMapping("/edit/{clientId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void editClient(@RequestBody ClientRequest clientRequest,@PathVariable(name = "clientId")String clientId){
+        clientService.editClient(clientRequest,clientId);
     }
 
     @GetMapping("/getAll")
@@ -45,17 +52,12 @@ public class ClientController {
         return clientService.getAllClients();
     }
 
-    @GetMapping("/{clientId}")
+    @GetMapping("/getContract/{clientId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Contract> getClientContracts(@PathVariable(name = "clientId")String clientId){
-        return clientService.getClientContracts(clientId);
+    public Contract getClientContract(@PathVariable(name = "clientId")String clientId){
+        return clientService.getClientContract(clientId);
     }
 
-    @PutMapping("/edit/{clientId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void editClient(@RequestBody ClientRequest clientRequest,@PathVariable(name = "clientId")String clientId){
-        clientService.updateClientContracts(clientRequest,clientId);
-    }
     @DeleteMapping("/delete/{clientId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteContract (@PathVariable(name = "clientId")String clientId){
@@ -74,5 +76,7 @@ public class ClientController {
         clientService.updateClientTicketsAvailable(clientId, ticketsAv);
         return ResponseEntity.ok().build();
     }
+
+
 }
 

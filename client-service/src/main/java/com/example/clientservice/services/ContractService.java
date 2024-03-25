@@ -6,8 +6,12 @@ import com.example.clientservice.model.Contract;
 import com.example.clientservice.model.ContractType;
 import com.example.clientservice.repo.ContractRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.time.LocalDate;
 import java.util.Calendar;
@@ -39,32 +43,27 @@ public class ContractService {
         Contract contract = Contract.builder()
                 .contractType(contractRequest.getContractType())
                 .premiumType(contractRequest.getPremiumType())
-                .entreprise(contractRequest.getEntreprise())
-                .phoneNumber(contractRequest.getPhoneNumber())
                 .description(contractRequest.getDescription())
                 .startDate(contractRequest.getStartDate())
-                .updateDate(new Date())
                 .endDate(contractRequest.getEndDate())
+                .updateDate(new Date())
                 .description(contractRequest.getDescription())
                 .maintenance(contractRequest.getMaintenance())
                 .build();
-        switch (contractRequest.getContractType()){
-            case STANDARD :
+        switch (contractRequest.getContractType()) {
+            case STANDARD:
                 contract.setPremiumType(null);
                 break;
-            case PREMIUM :
-                switch (contractRequest.getPremiumType()){
-                    case SILVER :
+            case PREMIUM:
+                switch (contractRequest.getPremiumType()) {
+                    case SILVER:
                         contract.setTickets(5);
-                        contract.setCurrentTickets(5);
                         break;
                     case GOLD:
                         contract.setTickets(10);
-                        contract.setCurrentTickets(10);
                         break;
                     case PLATINIUM:
                         contract.setTickets(50);
-                        contract.setCurrentTickets(50);
                         break;
                 }
         }
@@ -82,103 +81,88 @@ public class ContractService {
         contractResponse.setId(contract.getId());
         contractResponse.setContractType(contract.getContractType());
         contractResponse.setPremiumType(contract.getPremiumType());
-        contractResponse.setEntreprise(contract.getEntreprise());
-        contractResponse.setPhoneNumber(contract.getPhoneNumber());
         contractResponse.setStartDate(contract.getStartDate());
         contractResponse.setEndDate(contract.getEndDate());
+        contractResponse.setUpdateDate(contract.getUpdateDate());
         contractResponse.setDescription(contractResponse.getDescription());
         contractResponse.setMaintenance(contract.getMaintenance());
         contractResponse.setTickets(contract.getTickets());
-        contractResponse.setCurrentTickets(contract.getCurrentTickets());
         return contractResponse;
     }
 
-    public void editContract(ContractRequest contractRequest,String _id) {
+    public void editContract(ContractRequest contractRequest, String _id) {
         Optional<Contract> existingContract = contractRepo.findById(_id);
-        if(existingContract.isPresent()){
+        if (existingContract.isPresent()) {
             Contract contract = existingContract.get();
 
             contract.setContractType(contractRequest.getContractType());
             contract.setPremiumType(contractRequest.getPremiumType());
-            contract.setEntreprise(contractRequest.getEntreprise());
-            contract.setPhoneNumber(contractRequest.getPhoneNumber());
             contract.setDescription(contractRequest.getDescription());
             contract.setStartDate(contractRequest.getStartDate());
             contract.setEndDate(contractRequest.getEndDate());
             contract.setUpdateDate(new Date());
-            contract.setMaintenance(contractRequest.getMaintenance());
-            contract.setCurrentTickets(contractRequest.getCurrentTickets());
-            switch (contractRequest.getContractType()){
-                case STANDARD :
+            switch (contractRequest.getContractType()) {
+                case STANDARD:
                     contract.setPremiumType(null);
-                    contract.setCurrentTickets(0);
+                    contract.setTickets(0);
+                    contract.setMaintenance(0);
                     break;
-                case PREMIUM :
-                    switch (contractRequest.getPremiumType()){
-                        case SILVER :
-                            if(contractRequest.getCurrentTickets()>5){
-                                throw new IllegalArgumentException("Silver current tickets should be below or equal to 5");
-                            }else{
-                                contract.setTickets(5);
-                            }
-                            break;
-                        case GOLD:
-                            if(contractRequest.getCurrentTickets()>10){
-                                throw new IllegalArgumentException("Gold current tickets should be below or equal to 10");
-                            }else{
-                                contract.setTickets(10);
-                            }
-                            break;
-                        case PLATINIUM:
-                            contract.setTickets(50);
-                            contract.setCurrentTickets(50);
-                            break;
-                    }
+                case PREMIUM:
+                    contract.setTickets(contractRequest.getTickets());
+                    contract.setMaintenance(contractRequest.getMaintenance());
             }
-
             contractRepo.save(contract);
         } else {
             throw new RuntimeException("Contract with ID " + _id + " not found");
         }
     }
 
-    public void deleteContract(String id) {
-        contractRepo.deleteById(id);
+    public void deleteContract(String contractId) {
+        if (contractRepo.existsById(contractId)) {
+            contractRepo.deleteById(contractId);
+        } else {
+            throw new NotFoundException("Contract not found with ID: " + contractId);
+        }
     }
 
     // ---------------------------------Repository methods----------------------------------
-    public Contract getContractById(String contractId){
+    public Contract getContractById(String contractId) {
         return contractRepo.getContractById(contractId);
     }
 
-    public List<Contract>findByContractType(ContractType contractType){
+    public List<Contract> findByContractType(ContractType contractType) {
         return contractRepo.findByContractType(contractType);
     }
 
-    public List<Contract>findByPremiumType(ContractType.PremiumType premiumType){
+    public List<Contract> findByPremiumType(ContractType.PremiumType premiumType) {
         return contractRepo.findByPremiumType(premiumType);
     }
 
-    public List<Contract>findByOrderByTicketsAsc(){
+    public List<Contract> findByOrderByTicketsAsc() {
         return contractRepo.findByOrderByTicketsAsc();
     }
 
-    public List<Contract>findByOrderByTicketsDesc(){
+    public List<Contract> findByOrderByTicketsDesc() {
         return contractRepo.findByOrderByTicketsDesc();
     }
+
     /*
     public List<Contract>findByOrderByStartDate(){
         return contractRepo.findByOrderByStartDate();
     }
     */
-    public List<Contract>findByOrderByEndDateAsc(){
+    public List<Contract> findByOrderByEndDateAsc() {
         return contractRepo.findByOrderByEndDateAsc();
     }
-    public List<Contract>findByOrderByEndDateDesc(){
+
+    public List<Contract> findByOrderByEndDateDesc() {
         return contractRepo.findByOrderByEndDateDesc();
     }
 
-
-
-
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public static class NotFoundException extends RuntimeException {
+        public NotFoundException(String message) {
+            super(message);
+        }
+    }
 }
